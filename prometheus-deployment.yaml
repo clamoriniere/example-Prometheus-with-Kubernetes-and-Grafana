@@ -44,7 +44,12 @@ spec:
         volumeMounts:
         - name: config-volume
           mountPath: /etc/prometheus
+        - name: data
+          mountPath: /prometheus
+      serviceAccount: prometheus
       volumes:
       - name: config-volume
         configMap:
           name: prometheus
+      - name: data
+        emptyDir: {}

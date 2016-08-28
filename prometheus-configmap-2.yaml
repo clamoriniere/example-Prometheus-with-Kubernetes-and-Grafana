@@ -16,7 +16,7 @@ data:
     - job_name: 'kubernetes_components'
       kubernetes_sd_configs:
       - api_servers:
-        - 'https://kubernetes'
+        - 'https://192.168.128.16:8443'
         in_cluster: true
         # This configures Prometheus to identify itself when scraping
         # metrics from Kubernetes cluster components.

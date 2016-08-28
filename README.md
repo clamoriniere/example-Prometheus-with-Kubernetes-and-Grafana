@@ -1,33 +1,55 @@
-# Prometheus with Kubernetes and Grafana
+# Prometheus with Openshift and Grafana
 
-aim of the repos it to show how we can use prometheus with kubernetes and grafana.
-the following step will help you to create a kubernetes cluster with [minikube](https://github.com/kubernetes/minikube)
+aim of the repos it to show how we can use prometheus with openshift and grafana.
+the following step will help you to create a openshift cluster with [oc cluster up](https://github.com/openshift/origin/blob/master/docs/cluster_up_down.md)
 and deploy [prometheus.io](https://prometheus.io) in this cluster. Then deploy and configure
 a [Grafana](https://grafana.net) dashboard connected to the prometheus service.
 
 ## Kubernetes
 
-I used minikube to setup a one node cluster
+I used ```oc``` to setup a one node cluster. procedure to install the ```oc``` cli: [link](https://github.com/openshift/origin/blob/master/docs/cluster_up_down.md)) 
 
-````
-$ minikube start
-````
+
+```https://github.com/openshift/origin/blob/master/docs/cluster_up_down.md
+$ oc cluster up
+```
 
 ```
-$ minikube get nodes
-````
+$ oc get nodes
+```
+
+You are logged in as:
+
+```
+User: developer
+Password: developer
+```
+
+To login as administrator:
+```
+oc login -u system:admin
+```
+
+
 
 ## Install Prometheus from coreos tutorial
 
 link: (Coreos tutorial)[https://coreos.com/blog/prometheus-and-kubernetes-up-and-running.html]
 
 ```
-$ kubectl create -f prometheus-configmap-1.yaml
+oc create -f prometheus-serviceaccount.yaml
+oc policy add-role-to-user system admin -n myproject
+oc adm policy add-cluster-role-to-user cluster-reader system:serviceaccount:myproject:prometheus
+```
+
+
+```
+$ oc create -f prometheus-configmap-1.yaml
 configmap "prometheus" created
 ```
 
 ```
-$ kubectl create -f prometheus-deployment.yaml
+$ oc create -f prometheus-deployment.yaml
 You have exposed your service on an external port on all nodes in your
 cluster.  If you want to expose this service to the external internet, you may
 need to set up firewall rules for the service port(s) (tcp:30900) to serve traffic.
@@ -37,27 +59,32 @@ service "prometheus" created
 deployment "prometheus" created
 ```
 
+expose the service:
 ```
-$ kubectl replace -f prometheus-configmap-2.yaml
-```
-
-```
-$ curl -XPOST http://172.17.4.201:30900/-/reload
+oc expose service prometheus --hostname=prometheus.localhost
 ```
 
 ```
-$ kubectl create -f node-exporter.yaml 
+$ oc create -f node-exporter.yaml 
 daemonset "node-exporter" created
 ```
 
 ```
-open http://$(minikube ip):30900
+open http://prometheus.localhost
+```
+
+```
+$ oc replace -f prometheus-configmap-2.yaml
+```
+
+```
+$ curl -XPOST http://prometheus.localhost/-/reload
 ```
 
 ## Install grafana
 
 ```
-$ kubectl create -f Grafana-service.yaml
+$ oc create -f Grafana-service.yaml
 You have exposed your service on an external port on all nodes in your
 cluster.  If you want to expose this service to the external internet, you may
 need to set up firewall rules for the service port(s) (tcp:30603) to serve traffic.
@@ -67,17 +94,21 @@ service "prometheus" created
 ```
 
 ```
-$ kubectl create -f Grafana-deployment.yaml
+$ oc create -f Grafana-deployment.yaml
 deployment "grafana" created
 ```
 
 ```
-open http://$(minikube ip):30603
+oc expose service grafana --hostname=grafana.localhost
 ```
 
-- Connect to grafana: user/pass= dmin/adim
+```
+open http://grafana.localhost
+```
+
+- Connect to grafana: user/pass= admin/adim
 - Add dashboad to grafana:
-    * add prometheus data source: "name=prometheus", type="prometheus", "host=http://$(minikube ip):30900"
+    * add prometheus data source: "name=prometheus", type="prometheus", "host=http://prometheus.localhost"
     * add the dashboard from the ./dashboard folder
 
 dashboards come from [https://github.com/jimmidyson/prometheus-grafana-dashboards](https://github.com/jimmidyson/prometheus-grafana-dashboards)

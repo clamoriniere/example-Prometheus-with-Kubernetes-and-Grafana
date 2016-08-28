@@ -2,7 +2,7 @@
   "__inputs": [
     {
       "name": "DS_PROMETHEURS",
-      "label": "prometheurs",
+      "label": "prometheus",
       "description": "",
       "type": "datasource",
       "pluginId": "prometheus",
@@ -36,7 +36,7 @@
     }
   ],
   "id": null,
-  "title": "Kubernetes - Pods 2",
+  "title": "Kubernetes - Pods",
   "tags": [],
   "style": "dark",
   "timezone": "browser",
@@ -83,7 +83,7 @@
           },
           "targets": [
             {
-              "expr": "time() - max(container_start_time_seconds{kubernetes_namespace=\"$namespace\", kubernetes_pod_name=\"$pod\"})",
+              "expr": "time() - max(container_start_time_seconds{io_kubernetes_pod_namespace=\"$namespace\", io_kubernetes_pod_name=\"$pod\"})",
               "intervalFactor": 2,
               "refId": "A",
               "step": 600,
@@ -167,7 +167,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(container_memory_usage_bytes{kubernetes_namespace=\"$namespace\", kubernetes_pod_name=\"$pod\"})",
+              "expr": "sum(container_memory_usage_bytes{io_kubernetes_pod_namespace=\"$namespace\", io_kubernetes_pod_name=\"$pod\"})",
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "Used",
@@ -175,7 +175,7 @@
               "step": 60
             },
             {
-              "expr": "sum(container_memory_working_set_bytes{kubernetes_namespace=\"$namespace\", kubernetes_pod_name=\"$pod\"})",
+              "expr": "sum(container_memory_working_set_bytes{io_kubernetes_pod_namespace=\"$namespace\", io_kubernetes_pod_name=\"$pod\"})",
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "Working",
@@ -253,14 +253,14 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(irate(container_cpu_usage_seconds_total{kubernetes_namespace=\"$namespace\", kubernetes_pod_name=\"$pod\"}[5m]))",
+              "expr": "sum(irate(container_cpu_usage_seconds_total{io_kubernetes_pod_namespace=\"$namespace\", io_kubernetes_pod_name=\"$pod\"}[5m]))",
               "intervalFactor": 2,
               "legendFormat": "Total",
               "refId": "A",
               "step": 60
             },
             {
-              "expr": "sum(irate(container_cpu_system_seconds_total{kubernetes_namespace=\"$namespace\", kubernetes_pod_name=\"$pod\"}[5m]))",
+              "expr": "sum(irate(container_cpu_system_seconds_total{io_kubernetes_pod_namespace=\"$namespace\", io_kubernetes_pod_name=\"$pod\"}[5m]))",
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "Kernel",
@@ -268,7 +268,7 @@
               "step": 60
             },
             {
-              "expr": "sum(irate(container_cpu_user_seconds_total{kubernetes_namespace=\"$namespace\", kubernetes_pod_name=\"$pod\"}[5m]))",
+              "expr": "sum(irate(container_cpu_user_seconds_total{io_kubernetes_pod_namespace=\"$namespace\", io_kubernetes_pod_name=\"$pod\"}[5m]))",
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "User",
@@ -362,7 +362,7 @@
         "multiFormat": "glob",
         "name": "namespace",
         "options": [],
-        "query": "label_values(kubernetes_namespace)",
+        "query": "label_values(io_kubernetes_pod_namespace)",
         "refresh": 1,
         "refresh_on_load": true,
         "regex": "",
@@ -378,10 +378,10 @@
         "multiFormat": "glob",
         "name": "pod",
         "options": [],
-        "query": "container_start_time_seconds{kubernetes_namespace=\"$namespace\"}",
+        "query": "container_start_time_seconds{io_kubernetes_pod_namespace=\"$namespace\"}",
         "refresh": 1,
         "refresh_on_load": true,
-        "regex": "/kubernetes_pod_name=\"([^\"]+)\"/",
+        "regex": "/io_kubernetes_pod_name=\"([^\"]+)\"/",
         "type": "query",
         "hide": 0
       }

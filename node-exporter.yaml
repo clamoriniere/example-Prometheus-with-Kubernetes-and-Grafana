@@ -28,6 +28,7 @@ spec:
         app: node-exporter
       name: node-exporter
     spec:
+      serviceAccount: prometheus
       containers:
       - image: prom/node-exporter
         name: node-exporter

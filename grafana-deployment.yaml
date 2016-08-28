@@ -12,7 +12,7 @@ spec:
         role: db
     spec:
       containers:
-        - image: grafana/grafana
+        - image: cedriclam/grafana-prometheus:latest
           imagePullPolicy: Always
           name: grafana
           resources:
@@ -25,4 +25,18 @@ spec:
               memory: 200Mi
           ports:
             - containerPort: 3000
+          volumeMounts:
+            - mountPath: /var/log/grafana
+              name: grafana-log
+            - mountPath: /var/lib/grafana
+              name: grafana-lib
+            - mountPath: /etc/grafana
+              name: grafana-etc
+      volumes:
+        - name: grafana-lib
+          emptyDir: {}
+        - name: grafana-log
+          emptyDir: {}
+        - name: grafana-etc
+          emptyDir: {}
 
